@@ -18,12 +18,6 @@ class Graph:
         self.graph = defaultdict(list)  # default dictionary to store graph
         self.Time = 0
 
-    def V(self):
-        """
-        :return: return # of vertices
-        """
-        return self.V()
-
     def add_edge(self, u, v):
         """Add an edge to graph
 
