@@ -84,7 +84,7 @@ class ArticulatePoints:
     def get_articulate_vertices(self):
         """Suppose v is a non-root vertex of the DFS tree T,
         Then v is an articulation point of G if and only if there is a child w of v
-        in T with low(w) >= d[v]
+           in DFS Tree T (Not in original Tree) with low(w) >= d[v]
         :return: a list of articulation vertices
         """
         res = []
