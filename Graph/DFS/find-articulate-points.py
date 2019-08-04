@@ -35,6 +35,8 @@ class ArticulatePoints:
         """A sample dfs with d and color traced.
         :param u: the parent of v, None if v is the starting point of the dfs
         :param v: a vertex
+
+        Note: we can also use  parent[v] to keeps the record of parent of each vertex
         """
         self.cnt += 1
         self.vertexColor[v] = VertexColor.GREY
@@ -85,6 +87,11 @@ class ArticulatePoints:
         """Suppose v is a non-root vertex of the DFS tree T,
         Then v is an articulation point of G if and only if there is a child w of v
            in DFS Tree T (Not in original Tree) with low(w) >= d[v]
+
+        Note: A point in a graph is called an Articulation Point or Cut-Vertex if upon removing that point let's say P,
+        there is at least one child(C) of it(P) , that is disconnected from the whole graph.
+        In other words at least one of P's child C cannot find a "back edge".
+
         :return: a list of articulation vertices
         """
         res = []
