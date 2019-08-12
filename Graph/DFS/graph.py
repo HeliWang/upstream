@@ -16,7 +16,6 @@ class Graph:
         """
         self.V = vertices
         self.graph = defaultdict(list)  # default dictionary to store graph
-        self.Time = 0
 
     def add_edge(self, u, v):
         """Add an edge to graph
