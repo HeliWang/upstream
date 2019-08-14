@@ -1,4 +1,8 @@
-"""Bisection algorithms."""
+"""Bisection algorithms.
+Find First and Last Position of Element in Sorted Array
+1. Implement in iterative way
+2. Recursive Way
+"""
 
 def insort_right(a, x, lo=0, hi=None):
     """Insert item x in list a, and keep it sorted assuming a is sorted.
