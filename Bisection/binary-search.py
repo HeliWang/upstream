@@ -1,66 +1,45 @@
-"""Bisection algorithms.
-Find First and Last Position of Element in Sorted Array
-1. Implement in iterative way
-2. Recursive Way
-"""
+class Solution:
+    def searchRange(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: List[int]
+        """
 
-def insort_right(a, x, lo=0, hi=None):
-    """Insert item x in list a, and keep it sorted assuming a is sorted.
-    If x is already in a, insert it to the right of the rightmost x.
-    Optional args lo (default 0) and hi (default len(a)) bound the
-    slice of a to be searched.
-    """
+        def bisect_hi():
+            """
+            Return an index i so that a[i:] have e > x
+            It is possible to have l == len(nums) if target > nums[-1]
+            if target < nums[0]: l = 0
+            """
+            l = 0
+            r = len(nums)
+            while l < r:
+                mid = (l + r) // 2
+                if target >= nums[mid]:
+                    l = mid + 1
+                else:
+                    r = mid
+            return l
 
-    if lo < 0:
-        raise ValueError('lo must be non-negative')
-    if hi is None:
-        hi = len(a)
-    # implement here
+        def bisect_lo():
+            """
+            Return an index i so that a[i:] have e >= x
+            It is possible to have l == len(nums) if target > nums[-1]
+            if target < nums[0]: l = 0
+            """
+            l = 0
+            r = len(nums)
+            while l < r:
+                mid = (l + r) // 2
+                if target > nums[mid]:
+                    l = mid + 1
+                else:
+                    r = mid
+            return l
 
-insort = insort_right   # backward compatibility
-
-def bisect_right(a, x, lo=0, hi=None):
-    """Return the index where to insert item x in list a, assuming a is sorted.
-    The return value i is such that all e in a[:i] have e <= x, and all e in
-    a[i:] have e > x.  So if x already appears in the list, a.insert(x) will
-    insert just after the rightmost x already there.
-    Optional args lo (default 0) and hi (default len(a)) bound the
-    slice of a to be searched.
-    """
-
-    if lo < 0:
-        raise ValueError('lo must be non-negative')
-    if hi is None:
-        hi = len(a)
-    # implement here
-
-bisect = bisect_right   # backward compatibility
-
-def insort_left(a, x, lo=0, hi=None):
-    """Insert item x in list a, and keep it sorted assuming a is sorted.
-    If x is already in a, insert it to the left of the leftmost x.
-    Optional args lo (default 0) and hi (default len(a)) bound the
-    slice of a to be searched.
-    """
-
-    if lo < 0:
-        raise ValueError('lo must be non-negative')
-    if hi is None:
-        hi = len(a)
-    # implement here
-
-
-def bisect_left(a, x, lo=0, hi=None):
-    """Return the index where to insert item x in list a, assuming a is sorted.
-    The return value i is such that all e in a[:i] have e < x, and all e in
-    a[i:] have e >= x.  So if x already appears in the list, a.insert(x) will
-    insert just before the leftmost x already there.
-    Optional args lo (default 0) and hi (default len(a)) bound the
-    slice of a to be searched.
-    """
-
-    if lo < 0:
-        raise ValueError('lo must be non-negative')
-    if hi is None:
-        hi = len(a)
-    # implement here
+        hi = bisect_hi()
+        lo = bisect_lo()
+        if lo == len(nums) or nums[lo] != target:
+            return [-1, -1]
+        return [lo, hi - 1]
