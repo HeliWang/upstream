@@ -48,3 +48,4 @@ class Graph:
                 else:
                     g.add_edge(int(parts[0]), int(parts[1]))
         return g
+

@@ -5,7 +5,7 @@ O(n*logk) using PQ
 https://www.lizenghai.com/archives/20423.html
 """
 import collections
-
+import heapq
 
 class Solution:
     def isPossible(self, nums: List[int]) -> bool:
