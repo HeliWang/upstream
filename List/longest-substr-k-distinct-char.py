@@ -74,13 +74,6 @@ def longest_substr_len(self):
     """
 
 
-"""
-(3) What if the input is a stream of data? Limited time complexity to O(n)
-"""
-
-import heapq
-
-
 class IndexMinPQ(object):
     """
     Assume insert(key, priority), update_priority(key, new_priority), delete(key), delete_min() operations are all in O(log n) time complexity
@@ -90,13 +83,11 @@ class IndexMinPQ(object):
     # map: key (char) -> (priority, index in the pq array)
     # self.pq is an array of keys (chars), compared by the key (char)'s priority by looking up the map
     """
-
     def __init__(self):
-        self.pq = []
+        pass
 
     def insert(self, char, priority):
-        heapq.heappush(self.pq, (priority, char))
-        return self.pq.index((priority, char))
+        pass
 
     def contains(self, char):
         pass
@@ -106,21 +97,23 @@ class IndexMinPQ(object):
 
     def remove(self, char):
         pass
-        heapq.heapify(self.pq)
 
     def update(self, char, new_priority):
         pass
 
     def min(self):
-        return self.pq[0]
+        pass
 
     def delete_min(self):
-        return heapq.heappop(self.pq)
+        pass
 
     def size(self):
         pass
 
 
+"""
+(3) What if the input is a stream of data? Limited time complexity to O(n)
+"""
 class LongestSubstr(object):
     def __init__(self):
         pass
