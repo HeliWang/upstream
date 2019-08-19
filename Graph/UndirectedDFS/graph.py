@@ -8,7 +8,6 @@ Graph Class:
 from collections import defaultdict
 import os
 
-
 class Graph:
     def __init__(self, vertices):
         """
