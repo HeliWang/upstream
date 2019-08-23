@@ -11,11 +11,28 @@ Return the minimum cost so that for every pair of cities,
   connection costs used. If the task is impossible, return -1.
 """
 
+import uf
+import sys
 
 class Solution(object):
     def minimumCost(self, N, connections):
         """
         :type N: int
-        :type connections: List[List[int]]
+        :type connections: List[List[int]]  [city1, city2, cost]
         :rtype: int
         """
+        union_find = UnionFind(N)
+        connections.sort(key=lambda x: x[2])
+        res = 0
+        for connection in connections:
+            i = connection[0] - 1
+            j = connection[1] - 1
+            cost = connection[2]
+            if union_find.find(i) == union_find.find(j): continue
+            res += cost
+            union_find.union(i, j)
+        # WHAT IF THERE IS NO MST!!!!!
+        cid = union_find.find(0)  # component id
+        for i in range(N):
+            if union_find.find(i) != cid: return -1
+        return res

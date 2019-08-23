@@ -20,13 +20,13 @@ class UnionFind(object):
         if root_i == root_j: return
         self.count -= 1
         # self.parent[root_i] = root_j  may be unbalanced
-        if self.size[i] < self.size[j]:
+        if self.size[root_i] < self.size[root_j]:
             # make smaller root point to larger one
-            self.parent[i] = j
-            self.size[j] += self.size[i]
+            self.parent[root_i] = root_j
+            self.size[root_j] += self.size[root_i]
         else:
-            self.parent[j] = i
-            self.size[i] += self.size[j]
+            self.parent[root_j] = root_i
+            self.size[root_i] += self.size[root_j]
 
     def find(self, i):
         """
