@@ -29,6 +29,8 @@ When encounter number or nested expression,
   res = (+ -) val
 """
 
+from collections import deque
+
 
 def calc_multi_div(nested_tokens):
     op = "*"
@@ -37,19 +39,19 @@ def calc_multi_div(nested_tokens):
         token = nested_tokens.popleft()
         if token in ["*", "/"]:
             op = token
-        elif type(token) == list or type(token) == float:
+        elif type(token) == deque or type(token) == float:
             num = token
-            if type(token) == list:
+            if type(token) == deque:
                 num = calc(token)
             if op == "*":
                 res *= num
             else:
                 res /= num
         else:
-            break
-    nested_tokens.pushleft(res)
-    nested_tokens.pushleft(token)
-
+            nested_tokens.appendleft(token)
+            nested_tokens.appendleft(res)
+            return
+    nested_tokens.appendleft(res)
 
 def calc(nested_tokens):
     op = "+"
@@ -57,15 +59,17 @@ def calc(nested_tokens):
     while nested_tokens:
         token = nested_tokens.popleft()
         next_token = nested_tokens[0] if nested_tokens else None
+        # print(token)
         if next_token in ["*", "/"]:
             nested_tokens.appendleft(token)
             calc_multi_div(nested_tokens)
+            # print(nested_tokens)
             continue
         if token in ["+", "-"]:
             op = token
         else:
             num = token
-            if type(token) == list:
+            if type(token) == deque:
                 num = calc(token)
             if op == "+":
                 res += num
@@ -73,21 +77,8 @@ def calc(nested_tokens):
                 res -= num
     return res
 
-
-print(calc([30, "+", 22, "-", 50]))
-print(calc([30, "+", 22, "-", 5]))
-print(calc([30, "+", 22, "/", 5]))
-print(calc([30, "+", 22, "/", 5, "*", 10]))
-print(calc([30, "+", 22, "/", 5, "*", 10, "+", [[10, "*", 20], "-", 5, "*", 6]]))
-# 30 + 22 / 5 * 10 + ((10*20) - 5 * 6)
-# 30 + 44 + 170
-# Already 31 mins!
-
-import collections
-
-
 def tokenize(exp_str):
-    tokens = []
+    tokens = deque()
     while exp_str:
         c = exp_str.popleft()
         if c == '(':
@@ -102,20 +93,14 @@ def tokenize(exp_str):
             while exp_str and exp_str[0] in "0123456789":
                 num *= 10
                 num += ord(exp_str.popleft()) - ord('0')
-            tokens.append(num)
+            tokens.append(float(num))
     return tokens
 
 
-print(tokenize(collections.deque("( 2 + 6 * 3 + 5 - ( 3 * 14 / 7 + 2 ) * 5 ) + 3".replace(" ", ""))))
-
-
-# "( 2 + 6 * 3 + 5 - ( 3 * 14 / 7 + 2 ) * 5 ) + 3"
 def exp_eval(exp_str):
     exp_str = exp_str.replace(" ", "")
-    nested_tokens = tokenize(collections.deque(exp_str))
-    return calc(collections.deque(nested_tokens))
+    nested_tokens = tokenize(deque(exp_str))
+    return calc(deque(nested_tokens))
 
 
-print(exp_eval("( 2 + 6 * 3 + 5 - ( 3 * 14 / 7 + 2 ) * 5 ) + 3"))
-# - 12
-# Spend 51 mins
+assert exp_eval("( 2 + 6 * 3 + 5 - ( 3 * 14 / 7 + 2 ) * 5 ) + 3") == float(-12)
