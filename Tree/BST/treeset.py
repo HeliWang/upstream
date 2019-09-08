@@ -1,44 +1,7 @@
 """
 TreeSet Implementation using binary search (bisect)
 
-Usage:
-from treeset import TreeSet
-ts = TreeSet([3,7,2,7,1,3])
-print(ts)
->>> [1, 2, 3, 7]
-
-ts.add(4)
-print(ts)
->>> [1, 2, 3, 4, 7]
-
-ts.remove(7)
-print(ts)
->>> [1, 2, 3, 4]
-
-ts.remove(5)
-print(ts)
->>> [1, 2, 3, 4]
-
-ts.addAll([3,4,5,6])
-print(ts)
->>> [1, 2, 3, 4, 5, 6]
-
-print(ts[0])
->>> 1
-
-print(ts[-1])
->>> 6
-
-print(1 in ts)
->>> True
-
-print(100 in ts)
->>> False
-
-for i in TreeSet([1,3,1]):
-	print(i)
->>> 1
->>> 3
+Same interface as https://docs.oracle.com/javase/7/docs/api/java/util/TreeSet.html
 """
 import bisect
 
@@ -123,6 +86,32 @@ class TreeSet(object):
         else:
             return None
 
+    def first(self):
+        """
+        :return: the first (lowest) element currently in this set, or None if not exist
+        """
+        return self._treeset[0] if self._treeset else None
+
+    def last(self):
+        """
+        :return: the last (highest) element currently in this set, or None if not exist
+        """
+        return self._treeset[-1] if self._treeset else None
+
+    def pollfirst(self):
+        """
+        :return: Retrieves and removes the first (lowest) element, or returns null if this set is empty.
+        """
+        if not self._treeset: return None
+        return self._treeset.pop(0)
+
+    def pollLast(self):
+        """
+        :return: Retrieves and removes the last (highest) element, or returns null if this set is empty.
+        """
+        if not self._treeset: return None
+        return self._treeset.pop(-1)
+
     def __contains__(self, e):
         """
         Return True if e is in the treeSet
@@ -132,6 +121,20 @@ class TreeSet(object):
             return e == self._treeset[i]
         else:
             return False
+
+    def contains(self, e):
+        return self.__contains__(e)
+
+    def remove(self, e):
+        """
+        Remove element if element in TreeSet.
+        """
+        i = bisect.bisect_left(self._treeset, e)  # i can be len(self._treeset) if there is no element >= e
+        if i != len(self._treeset) and e == self._treeset[i]:
+            self._treeset.pop(i)
+            # linear time: self._treeset.remove(element)
+            return True
+        return False
 
     def __getitem__(self, num):
         return self._treeset[num]
@@ -151,25 +154,12 @@ class TreeSet(object):
         """
         return TreeSet(self._treeset)
 
-    def remove(self, element):
-        """
-        Remove element if element in TreeSet.
-        """
-        try:
-            self._treeset.remove(element)
-        except ValueError:
-            return False
-        return True
-
     def __iter__(self):
         """
         Do ascending iteration for TreeSet
         """
         for element in self._treeset:
             yield element
-
-    def pop(self, index):
-        return self._treeset.pop(index)
 
     def __str__(self):
         return str(self._treeset)
