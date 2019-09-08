@@ -63,18 +63,75 @@ class TreeSet(object):
         if element not in self:
             bisect.insort(self._treeset, element)
 
-    def ceiling(self, e):
+    def ceiling(self, e):  # ge
+        """
+        By convention, say ceiling(2.4) == 3, ceiling(3) == 3
+        Returns the leftmost element in this set greater than or equal to the given element,
+        or None if there is no such element.
+        """
         index = bisect.bisect_right(self._treeset, e)
+        # all numbers of self._treeset[index:] are > e
+        # thus, index can out of bound (= len(self._treeset)), or self._treeset[index] > e
         if self[index - 1] == e:
             return e
+        if index == len(self._treeset): return None
         return self._treeset[bisect.bisect_right(self._treeset, e)]
 
-    def floor(self, e):
+    def higher(self, e):  # gt
+        """
+        By convention, say higher(2.4) == 3, higher(3) == 4
+        Returns the leftmost element in this set that strictly greater than the given element,
+        or None if there is no such element.
+        """
+        index = bisect.bisect_right(self._treeset, e)
+        # all numbers of self._treeset[index:] are > e
+        # thus, index can out of bound (= len(self._treeset)), or self._treeset[index] > e
+        if index == len(self._treeset): return None
+        return self._treeset[bisect.bisect_right(self._treeset, e)]
+
+    def floor(self, e):  # le
+        """
+        By convention, say floor(2.4) == 2, floor(2) == 2
+        Returns the rightmost element in this set less than or equal to the given element,
+        or None if there is no such element (the array contains only number > e, or the array is empty)
+        """
         index = bisect.bisect_left(self._treeset, e)
+        # all numbers of self._treeset[index:] are >= e,
+        # thus, index can out of bound (= len(self._treeset)),
+        #   or self._treeset[index] == e,
+        #   or self._treeset[index] > e
         if self[index] == e:
             return e
+        elif index:  # index > 0
+            return self._treeset[index - 1]
         else:
-            return self._treeset[bisect.bisect_left(self._treeset, e) - 1]
+            return None
+
+    def lower(self, e):  # lt
+        """
+        By convention, say floor(2.4) == 2, floor(2) == 2
+        Returns the rightmost element in this set less than or equal to the given element,
+        or None if there is no such element (the array contains only number > e, or the array is empty)
+        """
+        index = bisect.bisect_left(self._treeset, e)
+        # all numbers of self._treeset[index:] are >= e,
+        # thus, index can out of bound (= len(self._treeset)),
+        #   or self._treeset[index] == e,
+        #   or self._treeset[index] > e
+        if index:  # index > 0
+            return self._treeset[index - 1]
+        else:
+            return None
+
+    def __contains__(self, e):
+        """
+        Return True if e is in the treeSet
+        """
+        i = bisect.bisect_left(self._treeset, e)  # i can be len(self._treeset) if there is no element >= e
+        if i != len(self._treeset):
+            return e == self._treeset[i]
+        else:
+            return False
 
     def __getitem__(self, num):
         return self._treeset[num]
@@ -122,12 +179,3 @@ class TreeSet(object):
             return self._treeset == target.treeset
         elif isinstance(target, list):
             return self._treeset == target
-
-    def __contains__(self, e):
-        """
-        Fast attribution judgment by bisect
-        """
-        try:
-            return e == self._treeset[bisect.bisect_left(self._treeset, e)]
-        except:
-            return False
