@@ -1,6 +1,7 @@
 class IndexMinPQ(object):
     """
-    Assume insert(key, priority), update_priority(key, new_priority), delete(key), delete_min() operations are all in O(log n) time complexity
+    Assume insert(key, priority), update_priority(key, new_priority), delete(key), delete_min()
+    operations are all in O(log n) time complexity
     The contains(key), find(key) -> priority, get_min operations are in O(1)
 
     Implementation:
@@ -9,8 +10,8 @@ class IndexMinPQ(object):
     # qp: reverse a key to an index to the pq array, a map which is key -> index in pq
 
 
-    BIG NOTE: THE NUMBERS IN THE NEXT LEVEL OF PQ IS NOT NECESSARY TO BE LARGER THAN CURRENT LEVEL, SINCE there might
-    be in different subtree.
+    BIG NOTE: THE NUMBERS IN THE NEXT LEVEL OF PQ IS NOT NECESSARY
+    TO BE LARGER THAN CURRENT LEVEL, SINCE there might be in different subtree.
 
     say
           1
@@ -31,7 +32,8 @@ class IndexMinPQ(object):
             self.__exch__(k, k // 2)
             k = k // 2
 
-    def __sink__(self):  # 沉没
+    def __sink__(self, k):  # 沉没
+        assert k > 0
         while k * 2 < len(self.pq):
             j = k * 2
             if j < len(self.pq) - 1 and self.__less__(j + 1, j):
@@ -86,6 +88,8 @@ class IndexMinPQ(object):
         del self.qp[key]
         del self.pr[key]
         self.pq.pop()
+        # what if the item deleted was actually len(len(self.pq) - 1)
+        if k == len(self.pq): return
         self.__sink__(k)
         # what if k was with even lower priority (in the same level or belong to different subtree)
         self.__swim__(k)
@@ -110,3 +114,40 @@ class IndexMinPQ(object):
 
     def size(self):
         return len(self.pq) - 1
+
+
+class Solution(object):
+    def getSkyline(self, buildings):
+        """
+        :type buildings: List[List[int]]
+        :rtype: List[List[int]]
+        Special Cases: entry points with the same x-axis but different heights!!!!
+        [[1,2,1],[1,2,2],[1,2,3]]
+        Special Cases: points with [0 entry, 2 leave, 10 height]  [2 entry, 12 leave, 10 height]
+        aka [[0,2,3],[2,5,3]]
+        """
+        pq = IndexMinPQ()
+        points = []
+        for i, building in enumerate(buildings):
+            points.append((building[0], 0, - building[2], i))
+            points.append((building[1], 1, building[2], i))
+        points.sort()
+        print(points)
+        results = []
+        for point in points:
+            x_axis, state, height, building_idx = point
+            if state == 0:
+                height = - height
+                if not pq.size() or buildings[pq.min()][2] < height:
+                    results.append((x_axis, height))
+                pq.insert(building_idx, - height)
+            else:
+                if pq.size() and pq.min() == building_idx:
+                    pq.remove(building_idx)
+                    height_left = 0
+                    if pq.size(): height_left = buildings[pq.min()][2]
+                    if height_left == height: continue
+                    results.append((x_axis, height_left))
+                else:
+                    pq.remove(building_idx)
+        return results
