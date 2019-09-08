@@ -19,14 +19,14 @@ type Node struct {
 type BinaryTree interface {
 	IsEmpty() bool
 	Size() int
-	Contains(key int) bool
+	ContainsKey(key int) bool
 	Get(key int) int
 	Put(key int, val int)
 	PollFirst()
 	PollLast()
 	Remove(key int)
-	First() int
-	Last() int
+	FirstKey() int
+	LastKey() int
 	Floor() int
 	CeilingKey() int
 	Select(k int)             // Return the key in the symbol table whose rank is k
@@ -96,7 +96,7 @@ func (t *AVL) Get(key int) int {
 }
 
 // Return true if the key exists in the symbol table
-func (t *AVL) Contains(key int) bool {
+func (t *AVL) ContainsKey(key int) bool {
 	n := t.get(t.root, key)
 	return n != nil
 }
@@ -125,10 +125,10 @@ func (t *AVL) rotateLeft(node *Node) *Node {
 	newHead.left = node
 
 	node.size = 1 + t.size(node.left) + t.size(node.right)
-	node.height = 1 + utils.LastOf(t.height(node.left), t.height(node.right))
+	node.height = 1 + utils.LastKeyOf(t.height(node.left), t.height(node.right))
 
 	newHead.size = 1 + t.size(newHead.left) + t.size(newHead.right)
-	newHead.height = 1 + utils.LastOf(t.height(newHead.left), t.height(newHead.right))
+	newHead.height = 1 + utils.LastKeyOf(t.height(newHead.left), t.height(newHead.right))
 
 	return newHead
 }
@@ -140,10 +140,10 @@ func (t *AVL) rotateRight(node *Node) *Node {
 	newHead.right = node
 
 	node.size = 1 + t.size(node.left) + t.size(node.right)
-	node.height = 1 + utils.LastOf(t.height(node.left), t.height(node.right))
+	node.height = 1 + utils.LastKeyOf(t.height(node.left), t.height(node.right))
 
 	newHead.size = 1 + t.size(newHead.left) + t.size(newHead.right)
-	newHead.height = 1 + utils.LastOf(t.height(newHead.left), t.height(newHead.right))
+	newHead.height = 1 + utils.LastKeyOf(t.height(newHead.left), t.height(newHead.right))
 
 	return newHead
 }
@@ -176,7 +176,7 @@ func (t *AVL) put(node *Node, key int, val int) *Node {
 			node.left = t.put(node.left, key, val)
 			// have such a t.size helper function to avoid visiting nil node
 			node.size = 1 + t.size(node.left) + t.size(node.right)
-			node.height = 1 + utils.LastOf(t.height(node.left), t.height(node.right))
+			node.height = 1 + utils.LastKeyOf(t.height(node.left), t.height(node.right))
 		} else if key == node.key {
 			node.key = key
 			node.val = val
@@ -184,7 +184,7 @@ func (t *AVL) put(node *Node, key int, val int) *Node {
 			node.right = t.put(node.right, key, val)
 			// have such a t.size helper function to avoid visiting nil node
 			node.size = 1 + t.size(node.left) + t.size(node.right)
-			node.height = 1 + utils.LastOf(t.height(node.left), t.height(node.right))
+			node.height = 1 + utils.LastKeyOf(t.height(node.left), t.height(node.right))
 		}
 		return t.balance(node)
 	}
@@ -205,7 +205,7 @@ func (t *AVL) PollFirst(node *Node) *Node {
 	if node.left != nil {
 		node.left = t.PollFirst(node.left)
 		// don't forget to update size ---- review data structure
-		node.height = 1 + utils.LastOf(t.height(node.left), t.height(node.right))
+		node.height = 1 + utils.LastKeyOf(t.height(node.left), t.height(node.right))
 		node.size = 1 + t.size(node.left) + t.size(node.right)
 		return t.balance(node)
 	}
@@ -223,7 +223,7 @@ func (t *AVL) PollFirst() {
 func (t *AVL) PollLast(node *Node) *Node {
 	if node.right != nil {
 		node.right = t.PollLast(node.right)
-		node.height = 1 + utils.LastOf(t.height(node.left), t.height(node.right))
+		node.height = 1 + utils.LastKeyOf(t.height(node.left), t.height(node.right))
 		node.size = 1 + t.size(node.left) + t.size(node.right)
 		return t.balance(node)
 	}
@@ -238,24 +238,24 @@ func (t *AVL) PollLast() {
 	t.root = t.balance(t.PollLast(t.root))
 }
 
-func (t *AVL) findFirst(node *Node) *Node {
+func (t *AVL) findFirstKey(node *Node) *Node {
 	if node == nil {
 		return node
 	}
 
 	if node.left != nil {
-		return t.findFirst(node.left)
+		return t.findFirstKey(node.left)
 	}
 	return node
 }
 
-func (t *AVL) findLast(node *Node) *Node {
+func (t *AVL) findLastKey(node *Node) *Node {
 	if node == nil {
 		return node
 	}
 
 	if node.right != nil {
-		return t.findLast(node.right)
+		return t.findLastKey(node.right)
 	}
 	return node
 }
@@ -269,11 +269,11 @@ func (t *AVL) Remove(node *Node, key int) *Node {
 		} else if node.right == nil {
 			return node.left
 		} else {
-			var FirstNode *Node = t.findFirst(node.right)
-			node.key = FirstNode.key
-			node.val = FirstNode.val
+			var FirstKeyNode *Node = t.findFirstKey(node.right)
+			node.key = FirstKeyNode.key
+			node.val = FirstKeyNode.val
 			node.right = t.PollFirst(node.right) // don't forget node.right
-			node.height = 1 + utils.LastOf(t.height(node.left), t.height(node.right))
+			node.height = 1 + utils.LastKeyOf(t.height(node.left), t.height(node.right))
 			node.size = 1 + t.size(node.left) + t.size(node.right) // dont forget update
 			return t.balance(node)
 		}
@@ -290,14 +290,14 @@ func (t *AVL) Remove(key int) {
 	t.root = t.balance(t.Remove(t.root, key))
 }
 
-func (t *AVL) First() (key int, val int) {
-	FirstNode := t.findFirst(t.root)
-	return FirstNode.key, FirstNode.val
+func (t *AVL) FirstKey() (key int, val int) {
+	FirstKeyNode := t.findFirstKey(t.root)
+	return FirstKeyNode.key, FirstKeyNode.val
 }
 
-func (t *AVL) Last() (key int, val int) {
-	LastNode := t.findLast(t.root)
-	return LastNode.key, LastNode.val
+func (t *AVL) LastKey() (key int, val int) {
+	LastKeyNode := t.findLastKey(t.root)
+	return LastKeyNode.key, LastKeyNode.val
 }
 
 // Returns the node with the largest key in the symbol table less than or equal to key.
