@@ -136,6 +136,33 @@ class TreeSet(object):
             return True
         return False
 
+    def select(self, k):
+        """Return the key in the symbol table whose rank is k (same as indexing)
+        rank = the number of keys in the symbol table strictly less than `key`
+             = the number of elements (>=0) before key [key]
+        """
+        if k < len(self._treeset):
+            return self._treeset[k]
+        else:
+            return None
+
+    def rank(self, key):
+        """Return the rank of the key
+             = the number of keys in the symbol table strictly less than `key`
+             = the number of elements (>=0) before key [key]
+        """
+        return bisect.bisect_left(self._treeset, key)
+
+    def range(self, lo, hi):
+        """Returns all keys in the symbol table in [lo, hi].
+        """
+        return self._treeset[bisect.bisect_left(self._treeset, lo): bisect.bisect_left(self._treeset, hi)]
+
+    def rangeSize(self, lo, hi):
+        """Returns the number of keys in the symbol table in [lo, hi].
+        """
+        return bisect.bisect_left(self._treeset, hi) - bisect.bisect_left(self._treeset, lo)
+
     def __getitem__(self, num):
         return self._treeset[num]
 

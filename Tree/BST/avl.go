@@ -16,7 +16,7 @@ type Node struct {
 	left, right *Node
 }
 
-type BinaryTree interface {
+type BalancedBST interface {
 	IsEmpty() bool
 	Size() int
 	ContainsKey(key int) bool
