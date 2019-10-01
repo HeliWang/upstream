@@ -16,7 +16,8 @@ async def cancel_me():
 
 async def main():
     # Create a "cancel_me" Task
-    task = asyncio.Task(cancel_me)
+    task = asyncio.
+    (cancel_me)
 
     # Wait for 1 second
     await asyncio.sleep(1)
