@@ -126,3 +126,48 @@ test_node3 = TreeNode(1)
 test_node1.left = test_node2
 test_node1.right = test_node3
 assert (not isValidBST(test_node1))
+
+
+class Solution(object):
+    def isValidBST(self, root):
+        """
+        :type root: TreeNode
+        :rtype: bool
+            2
+           / \
+          1   3
+        stack = [(2, -max, max)]
+        stack = [(3, 2, max), (1, -max, 2)]
+        stack = [(3, 2, max), (None, -max, 1), (None, 1, max)]
+        """
+        stack = [(root, -sys.maxint, sys.maxint)]
+        while stack:
+            node, minv, maxv = stack.pop()
+            if not node: continue
+            if not minv < node.val < maxv: return False
+            stack += (node.right, node.val, maxv), (node.left, minv, node.val)
+        return True
+
+
+class SolutionRec(object):
+    """
+       root, min_val, max_val
+         2   - sys.maxint, sys.maxint
+         1   - sys.maxint, 2
+         3   2, sys.maxint
+    """
+
+    def isValid(self, root, min_val, max_val):
+        if not root:
+            return True
+        if min_val < root.val < max_val:
+            return all([self.isValid(root.left, min_val, root.val), self.isValid(root.right, root.val, max_val)])
+        else:
+            return False
+
+    def isValidBST(self, root):
+        """
+        :type root: TreeNode
+        :rtype: bool
+        """
+        return self.isValid(root, - sys.maxint, sys.maxint)
