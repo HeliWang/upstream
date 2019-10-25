@@ -151,3 +151,67 @@ class Solution(object):
             if prices[x + 1] > prices[x]:
                 sum += prices[x + 1] - prices[x]
         return sum
+
+
+# https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/
+class Solution(object):
+    def maxProfit(self, prices):
+        """
+        [1,2,3,0,2]
+
+        profit[i][0] = holding the stock
+          continue a trasaction and sell on day i: profit[i - 1][0] + prices[i] - prices[i - 1]
+          start a new trasaction: profit[i - 1][1]
+        profit[i][1] = cooldown on day i, max(profit[i - 1][1], profit[i - 1][0])
+        return max(profit[n - 1])
+
+
+        """
+        n = len(prices)
+        if not n: return 0
+        profit = [[0] * 2 for _ in range(n)]
+        for i in range(1, n):
+            profit[i][0] = max(profit[i - 1][0] + prices[i] - prices[i - 1], profit[i - 1][1])
+            profit[i][1] = max(profit[i - 1][1], profit[i - 1][0])
+        return max(profit[n - 1])
+
+
+# https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/
+class Solution(object):
+    def maxProfit(self, prices, fee):
+        """
+        :type prices: List[int]
+        :type fee: int
+        :rtype: int
+
+        value[i][0] = portfolio value when holding the stock on day i
+            option1: new buy
+              max(value[i - 1][0], value[i - 1][1]) - fee
+            option2: continue a transaction as before
+              value[i - 1][0] + prices[i] - prices[i - 1]
+
+        value[i][1] = portfolio value when not holding the stock on day i
+            option1: keep cooling down as one day before
+              value[i - 1][1]
+            option2: a new cool-down day
+              value[i - 1][0]
+        return max(value[n - 1])
+
+        prices = [1, 3, 2, 8, 4, 9], fee = 2
+        [
+          [-2,  0],
+          [0 ,  0],
+          [-1,  0],
+          [5 ,  0],
+          [3 ,  5],
+          [8 ,  5],
+        ]
+        """
+        n = len(prices)
+        value = [[0] * 2 for _ in range(n)]
+        value[0][0] = 0 - fee
+        value[0][1] = 0
+        for i in range(1, n):
+            value[i][1] = max(value[i - 1][0], value[i - 1][1])
+            value[i][0] = max(value[i][1] - fee, value[i - 1][0] + prices[i] - prices[i - 1])
+        return max(value[n - 1])
